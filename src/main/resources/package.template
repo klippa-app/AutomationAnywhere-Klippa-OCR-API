@@ -1,0 +1,10 @@
+{
+  "name": "KlippaOCRAPI",
+  "label": "Klippa OCR API",
+  "description": "A Automation Anywhere Command to call the Klippa OCR API using a Automation Anywhere Bot. The Klippa OCR API provides real-time document extraction using OCR and Machine Learning, just send us the document and we provide you with the document content in a structured way to automate your document workflow.",
+  "group": "",
+  "artifactName": "",
+  "packageVersion": "",
+  "codeVersion": "",
+  "commands": []
+}
