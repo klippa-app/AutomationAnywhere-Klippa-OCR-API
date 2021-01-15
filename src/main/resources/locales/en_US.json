@@ -4,7 +4,7 @@
 	"ParseDocument.label": "Parse document",
 	"ParseDocument.node_label": "Parse document",
 	"ParseDocument.description": "Parse a document using the Klippa OCR API. Parses a GIF, PNG, JPG, HEIC/HEIF or PDF file.",
-	"ParseDocument.return_label": "A Dictionary with keys/values as described in our API documentation",
+	"ParseDocument.return_label": "A Dictionary with the JSON response as a string and the parsed version as a Dictionary. The first level contains the raw json response string in the key \"response\", the data with keys/values as described in our API documentation is in the key \"data\".",
 	"ParseDocument.BasePath.label": "Klippa OCR API base path",
 	"ParseDocument.BasePath.description": "The base path to the Klippa API.",
 	"ParseDocument.APIKey.label": "API Key",

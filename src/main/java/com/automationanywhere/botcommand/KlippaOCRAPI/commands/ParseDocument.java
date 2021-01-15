@@ -25,6 +25,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,8 +38,8 @@ import java.io.IOException;
         node_label = "[[ParseDocument.node_label]]", icon = "klippa.svg", comment = true,
         return_type=DataType.DICTIONARY, return_label="[[ParseDocument.return_label]]", return_required=true)
 public class ParseDocument {
-
-    private static final Messages MESSAGES = MessagesFactory.getMessages("com.automationanywhere.botcommand.KlippaOCRAPI");
+    private static final Messages MESSAGES = MessagesFactory.getMessages("com.automationanywhere.botcommand.KlippaOCRAPI.messages");
+    private static final Logger logger = LogManager.getLogger(ParseDocument.class);
 
     @Execute
     public DictionaryValue action(
@@ -55,25 +57,25 @@ public class ParseDocument {
             @Idx(index = "9", type = AttributeType.TEXT) @Pkg(label = "[[ParseDocument.HashDuplicateGroupID.label]]", description = "[[ParseDocument.HashDuplicateGroupID.label]]", default_value_type = STRING) String HashDuplicateGroupID
     ) throws BotCommandException
     {
-
         CloseableHttpClient httpClient = HttpClients.createDefault();
         HttpPost uploadFile = new HttpPost(BasePath + "/parseDocument");
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-        if (DocumentPath.equalsIgnoreCase("") && DocumentURL.equalsIgnoreCase("")) {
+        if ((DocumentPath == null || DocumentPath.equalsIgnoreCase("")) && (DocumentURL == null || DocumentURL.equalsIgnoreCase(""))) {
             throw new BotCommandException(MESSAGES.getString("noDocument", "DocumentPath", "DocumentURL"));
         }
 
-        if (!DocumentPath.equalsIgnoreCase("") && !DocumentURL.equalsIgnoreCase("")) {
+        if ((DocumentPath != null && !DocumentPath.equalsIgnoreCase("")) && (DocumentURL != null && !DocumentURL.equalsIgnoreCase(""))) {
             throw new BotCommandException(MESSAGES.getString("twoDocuments", "DocumentPath", "DocumentURL"));
         }
 
-        if (!DocumentPath.equalsIgnoreCase("")) {
+        if (DocumentPath != null && !DocumentPath.equalsIgnoreCase("")) {
+            logger.info("Setting document path: {}", DocumentPath);
             try {
                 // This attaches TheFile to the POST:
                 File f = new File(DocumentPath);
                 builder.addBinaryBody(
-                        "file",
+                        "document",
                         new FileInputStream(f),
                         ContentType.MULTIPART_FORM_DATA,
                         f.getName()
@@ -84,42 +86,54 @@ public class ParseDocument {
             }
         }
 
-        if (!DocumentURL.equalsIgnoreCase("")) {
+        if (DocumentURL != null && !DocumentURL.equalsIgnoreCase("")) {
+            logger.info("Setting document url: {}", DocumentURL);
+
             builder.addTextBody(
                     "url",
                     DocumentURL
             );
         }
 
-        if (!Template.equalsIgnoreCase("")) {
+        if (Template != null && !Template.equalsIgnoreCase("")) {
+            logger.info("Setting document template: {}", Template);
+
             builder.addTextBody(
                     "template",
                     Template
             );
         }
 
-        if (!PDFTextExtraction.equalsIgnoreCase("")) {
+        if (PDFTextExtraction != null && !PDFTextExtraction.equalsIgnoreCase("")) {
+            logger.info("Setting document pdf text extraction: {}", PDFTextExtraction);
+
             builder.addTextBody(
                     "pdf_text_extraction",
                     PDFTextExtraction
             );
         }
 
-        if (!UserData.equalsIgnoreCase("")) {
+        if (UserData != null && !UserData.equalsIgnoreCase("")) {
+            logger.debug("Setting document user data: {}", UserData);
+
             builder.addTextBody(
                     "user_data",
                     UserData
             );
         }
 
-        if (!UserDataSetExternalID.equalsIgnoreCase("")) {
+        if (UserDataSetExternalID != null && !UserDataSetExternalID.equalsIgnoreCase("")) {
+            logger.debug("Setting document user data external id: {}", UserDataSetExternalID);
+
             builder.addTextBody(
                     "user_data_set_external_id",
                     UserDataSetExternalID
             );
         }
 
-        if (!HashDuplicateGroupID.equalsIgnoreCase("")) {
+        if (HashDuplicateGroupID != null && !HashDuplicateGroupID.equalsIgnoreCase("")) {
+            logger.debug("Setting document hash duplicate group ID: {}", HashDuplicateGroupID);
+
             builder.addTextBody(
                     "hash_duplicate_group_id",
                     HashDuplicateGroupID
@@ -135,6 +149,12 @@ public class ParseDocument {
             CloseableHttpResponse response = httpClient.execute(uploadFile);
             responseJSON = EntityUtils.toString(response.getEntity());
             EntityUtils.consume(response.getEntity());
+
+            logger.debug("API Response: {}", responseJSON);
+
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new BotCommandException(MESSAGES.getString("errorFromOCRAPI", responseJSON));
+            }
         }
         catch (IOException e) {
             throw new BotCommandException(MESSAGES.getString("errorReadingAPIResponse", e.getLocalizedMessage()));

@@ -18,8 +18,6 @@ import com.automationanywhere.botcommand.data.impl.NumberValue;
 import com.automationanywhere.botcommand.data.impl.StringValue;
 
 public class JSONUtils {
-
-
     private DictionaryValue parseJSONObj(JSONObject jsonobj) {
         Map map = new HashMap<String, Value>();
 
@@ -94,8 +92,13 @@ public class JSONUtils {
 
     public DictionaryValue parseJSON(String jsonstring) {
         JSONObject json = new JSONObject(jsonstring);
-        DictionaryValue map = parseJSONObj(json);
-        return map;
+        DictionaryValue dict = new DictionaryValue();
+        Map map = new HashMap<String, Value>();
+        map.put("response", new StringValue(jsonstring));
+        map.put("data", parseJSONObj(json));
+        dict.set(map);
+
+        return dict;
     }
 
     public DictionaryValue queryJSON(String jsonstring, String query) {
