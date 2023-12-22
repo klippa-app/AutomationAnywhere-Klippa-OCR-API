@@ -47,7 +47,7 @@ public class ParseDocument {
             @Idx(index = "2", type = AttributeType.CREDENTIAL) @Pkg(label = "[[ParseDocument.APIKey.label]]", description = "[[ParseDocument.APIKey.label]]") @NotEmpty SecureString APIKey,
             @Idx(index = "3", type = AttributeType.TEXT) @Pkg(label = "[[ParseDocument.DocumentURL.label]]", description = "[[ParseDocument.DocumentURL.label]]") String DocumentURL,
             @Idx(index = "4", type = AttributeType.FILE) @Pkg(label = "[[ParseDocument.DocumentPath.label]]", description = "[[ParseDocument.DocumentPath.label]]") String DocumentPath,
-            @Idx(index = "5", type = AttributeType.TEXT) @Pkg(label = "[[ParseDocument.Template.label]]", description = "[[ParseDocument.Template.label]]") String Template,
+            @Idx(index = "5", type = AttributeType.TEXT) @Pkg(label = "[[ParseDocument.Template.label]]", description = "[[ParseDocument.Template.label]]", default_value_type = STRING, default_value = "financial_full") String Template,
             @Idx(index = "6", type = AttributeType.SELECT, options = {
                     @Idx.Option(index = "6.1", pkg = @Pkg(label = "[[ParseDocument.PDFTextExtraction.fast.label]]", value = "fast")),
                     @Idx.Option(index = "6.2", pkg = @Pkg(label = "[[ParseDocument.PDFTextExtraction.full.label]]", value = "full")),
